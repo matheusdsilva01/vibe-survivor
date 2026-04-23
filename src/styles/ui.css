@@ -1,0 +1,178 @@
+:root {
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  color: #f4f6fb;
+  background: #0d1118;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+#app {
+  position: relative;
+}
+
+#game-root {
+  width: 100%;
+  height: 100%;
+}
+
+#game-root canvas {
+  display: block;
+}
+
+#ui-root {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  padding: 16px;
+}
+
+#hud {
+  position: absolute;
+  left: 16px;
+  top: 16px;
+}
+
+.hud-card {
+  width: 310px;
+  background: rgba(13, 18, 26, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 12px;
+  padding: 12px;
+  backdrop-filter: blur(8px);
+}
+
+.hud-line {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.hud-line.compact {
+  margin-bottom: 2px;
+  color: #d1d8e5;
+}
+
+.bar {
+  width: 100%;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+
+.bar span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #f35b72, #ef233c);
+}
+
+.bar.xp span {
+  background: linear-gradient(90deg, #4cc9f0, #4361ee);
+}
+
+#weapon-select-panel,
+#level-up-panel,
+#game-over-panel {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+
+.panel-card {
+  pointer-events: auto;
+  width: min(660px, calc(100vw - 30px));
+  background: rgba(13, 18, 26, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55);
+}
+
+.panel-card h2 {
+  margin: 0 0 10px;
+}
+
+.panel-card p {
+  margin: 0 0 16px;
+  color: #cad2df;
+}
+
+.choice-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.choice-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 14px;
+  color: #eef2fc;
+  background: #1c2432;
+  border: 1px solid #2f3e56;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.choice-btn:hover {
+  border-color: #5f7ec2;
+  background: #233046;
+}
+
+.choice-btn span {
+  color: #bfd0ea;
+  font-size: 13px;
+}
+
+.choice-btn .muted {
+  color: #8ea4c9;
+  font-size: 12px;
+  text-transform: capitalize;
+}
+
+.game-over {
+  width: min(420px, calc(100vw - 30px));
+  text-align: center;
+}
+
+#restart-btn {
+  pointer-events: auto;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  background: #4f8ef7;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#restart-btn:hover {
+  background: #3578e8;
+}
+
+.hidden {
+  display: none !important;
+}
+
+@media (max-width: 860px) {
+  .choice-list {
+    grid-template-columns: 1fr;
+  }
+}
