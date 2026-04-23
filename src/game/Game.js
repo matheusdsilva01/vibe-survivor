@@ -19,10 +19,19 @@ const GAME_STATE = {
   GAME_OVER: "game_over",
 };
 
+const MAP_CONFIG = {
+  arenaRadius: 100,
+  spawnBands: [
+    { id: "inner", min: 8, max: 28 },
+    { id: "mid", min: 28, max: 58 },
+    { id: "outer", min: 58, max: 96 },
+  ],
+};
+
 export class Game {
   constructor({ gameRoot, hudRoot, weaponSelectRoot, levelUpRoot, gameOverRoot }) {
     const uiRoot = hudRoot.parentElement || gameRoot;
-    this.world = new WorldScene(gameRoot);
+    this.world = new WorldScene(gameRoot, { map: MAP_CONFIG });
     this.hud = new HUD(hudRoot);
     this.gameOverRoot = gameOverRoot;
     this.feedback = new FeedbackSystem({
@@ -40,7 +49,9 @@ export class Game {
     this.elapsed = 0;
 
     this.player = new Player(this.world.scene);
-    this.spawner = new SpawnerSystem(this.world.scene, this.world.arenaRadius);
+    this.spawner = new SpawnerSystem(this.world.scene, this.world.arenaRadius, {
+      map: MAP_CONFIG,
+    });
     this.weaponSelectPanel = new WeaponSelectPanel(weaponSelectRoot, (weaponDef) => {
       this.player.setWeapon(createWeaponRuntime(weaponDef));
       this._restart();
@@ -171,6 +182,8 @@ export class Game {
       mobCount: this.spawner.mobs.length,
       elapsed: this.elapsed,
       weaponName: this.player.weapon?.name,
+      arenaRadius: this.world.arenaRadius,
+      spawnBand: this.spawner.lastSpawnBandId,
     });
   }
 
