@@ -19,6 +19,7 @@ export class SpawnerSystem {
     this.mobs = [];
     this.spawnTimer = 0;
     this.elapsed = 0;
+    this.lastSpawnBandId = this.spawnBands[this.spawnBands.length - 1].id;
   }
 
   update(deltaSeconds) {

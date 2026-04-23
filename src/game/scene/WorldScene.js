@@ -51,16 +51,17 @@ export class WorldScene {
     this.scene.add(ambient);
 
     const directional = new THREE.DirectionalLight(0xffffff, 1);
+    const shadowExtent = Math.max(30, this.arenaRadius * 1.1);
     directional.position.set(10, 18, 6);
     directional.castShadow = true;
     directional.shadow.mapSize.width = 1024;
     directional.shadow.mapSize.height = 1024;
     directional.shadow.camera.near = 1;
-    directional.shadow.camera.far = 60;
-    directional.shadow.camera.left = -30;
-    directional.shadow.camera.right = 30;
-    directional.shadow.camera.top = 30;
-    directional.shadow.camera.bottom = -30;
+    directional.shadow.camera.far = Math.max(60, this.arenaRadius * 3);
+    directional.shadow.camera.left = -shadowExtent;
+    directional.shadow.camera.right = shadowExtent;
+    directional.shadow.camera.top = shadowExtent;
+    directional.shadow.camera.bottom = -shadowExtent;
     this.scene.add(directional);
   }
 
