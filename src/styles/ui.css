@@ -88,6 +88,11 @@ body,
   color: #d1d8e5;
 }
 
+.hud-line.compact strong {
+  font-weight: 600;
+  color: #e2e8f0;
+}
+
 .bar {
   width: 100%;
   height: 10px;
