@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { Projectile } from "../entities/Projectile.js";
+import { createMobHitFeedbackEvent } from "./feedbackEvents.js";
 
 function distance2D(a, b) {
   return Math.hypot(a.x - b.x, a.z - b.z);
@@ -12,16 +13,18 @@ function sortByNearest(position, mobs) {
 }
 
 function applyDamage(mob, damage, effects) {
-  mob.takeDamage(damage);
+  const killed = mob.takeDamage(damage);
   if (effects?.slowAmount) {
     mob.applySlow(effects.slowAmount, effects.slowDuration || 1.2);
   }
+  return killed;
 }
 
 export class WeaponSystem {
-  constructor(scene) {
+  constructor(scene, { onMobHit } = {}) {
     this.scene = scene;
     this.projectiles = [];
+    this.onMobHit = onMobHit;
   }
 
   reset() {
@@ -68,7 +71,15 @@ export class WeaponSystem {
     const hits = nearestMobs.slice(0, maxHits);
     for (const mob of hits) {
       if (distance2D(player.position, mob.mesh.position) <= weapon.stats.range) {
-        applyDamage(mob, weapon.stats.damage, weapon.stats);
+        const killed = applyDamage(mob, weapon.stats.damage, weapon.stats);
+        this.onMobHit?.(
+          createMobHitFeedbackEvent({
+            amount: weapon.stats.damage,
+            killed,
+            source: weapon.archetype,
+            position: mob.mesh.position,
+          })
+        );
         if (weapon.stats.aoeRadius > 0) {
           this._applySplashDamage(mob, nearestMobs, weapon);
         }
@@ -79,7 +90,15 @@ export class WeaponSystem {
   _doPulseAttack(player, nearestMobs, weapon) {
     for (const mob of nearestMobs) {
       if (distance2D(player.position, mob.mesh.position) <= weapon.stats.aoeRadius) {
-        applyDamage(mob, weapon.stats.damage, weapon.stats);
+        const killed = applyDamage(mob, weapon.stats.damage, weapon.stats);
+        this.onMobHit?.(
+          createMobHitFeedbackEvent({
+            amount: weapon.stats.damage,
+            killed,
+            source: weapon.archetype,
+            position: mob.mesh.position,
+          })
+        );
       }
     }
   }
@@ -88,7 +107,16 @@ export class WeaponSystem {
     for (const mob of mobs) {
       if (mob === primaryMob || !mob.alive) continue;
       if (distance2D(primaryMob.mesh.position, mob.mesh.position) <= weapon.stats.aoeRadius) {
-        applyDamage(mob, weapon.stats.damage * 0.6, weapon.stats);
+        const amount = weapon.stats.damage * 0.6;
+        const killed = applyDamage(mob, amount, weapon.stats);
+        this.onMobHit?.(
+          createMobHitFeedbackEvent({
+            amount,
+            killed,
+            source: `${weapon.archetype}_splash`,
+            position: mob.mesh.position,
+          })
+        );
       }
     }
   }
@@ -134,7 +162,15 @@ export class WeaponSystem {
         if (distance2D(projectile.mesh.position, mob.mesh.position) > mob.radius + 0.35) continue;
 
         projectile.hitMobIds.add(mob.id);
-        applyDamage(mob, projectile.damage, projectile.owner.weapon.stats);
+        const killed = applyDamage(mob, projectile.damage, projectile.owner.weapon.stats);
+        this.onMobHit?.(
+          createMobHitFeedbackEvent({
+            amount: projectile.damage,
+            killed,
+            source: projectile.mode,
+            position: mob.mesh.position,
+          })
+        );
         if (projectile.remainingPierce > 0) {
           projectile.remainingPierce -= 1;
         } else {

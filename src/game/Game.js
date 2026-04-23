@@ -5,6 +5,7 @@ import { SpawnerSystem } from "./systems/SpawnerSystem.js";
 import { CombatSystem } from "./systems/CombatSystem.js";
 import { WeaponSystem } from "./systems/WeaponSystem.js";
 import { ProgressionSystem } from "./systems/ProgressionSystem.js";
+import { FeedbackSystem } from "./systems/FeedbackSystem.js";
 import { drawWeaponChoices, createWeaponRuntime } from "./data/weapons.js";
 import { HUD } from "../ui/HUD.js";
 import { LevelUpPanel } from "../ui/LevelUpPanel.js";
@@ -20,12 +21,21 @@ const GAME_STATE = {
 
 export class Game {
   constructor({ gameRoot, hudRoot, weaponSelectRoot, levelUpRoot, gameOverRoot }) {
+    const uiRoot = hudRoot.parentElement || gameRoot;
     this.world = new WorldScene(gameRoot);
     this.hud = new HUD(hudRoot);
     this.gameOverRoot = gameOverRoot;
+    this.feedback = new FeedbackSystem({
+      world: this.world,
+      uiRoot,
+    });
     this.progression = new ProgressionSystem();
-    this.combat = new CombatSystem();
-    this.weaponSystem = new WeaponSystem(this.world.scene);
+    this.combat = new CombatSystem({
+      onPlayerHit: (event) => this.feedback.handlePlayerHit(event),
+    });
+    this.weaponSystem = new WeaponSystem(this.world.scene, {
+      onMobHit: (event) => this.feedback.handleMobHit(event),
+    });
     this.state = GAME_STATE.RUNNING;
     this.elapsed = 0;
 
@@ -66,6 +76,7 @@ export class Game {
     this.progression.reset();
     this.spawner.reset();
     this.weaponSystem.reset();
+    this.feedback.reset();
     this.weaponSelectPanel.hide();
     this.levelUpPanel.hide();
     this._hideGameOver();
@@ -107,8 +118,9 @@ export class Game {
       this._tickRunning(delta);
     }
 
+    this.feedback.update(delta);
     this._renderUi();
-    this.world.updateCamera(this.player.position);
+    this.world.updateCamera(this.player.position, delta);
     this.world.render();
   };
 

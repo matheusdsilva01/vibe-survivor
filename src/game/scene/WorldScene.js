@@ -31,6 +31,12 @@ export class WorldScene {
       minPitch: 0.25,
       maxPitch: 1.35,
     };
+    this.shake = {
+      strength: 0,
+      duration: 0,
+      remaining: 0,
+      seed: 0,
+    };
     this.cameraForward = new THREE.Vector3(0, 0, -1);
     this.cameraRight = new THREE.Vector3(1, 0, 0);
     this._setupLights();
@@ -91,7 +97,7 @@ export class WorldScene {
     pos.z *= scale;
   }
 
-  updateCamera(targetPosition) {
+  updateCamera(targetPosition, deltaSeconds = 1 / 60) {
     const { yaw, pitch, radius } = this.cameraOrbit;
     const offsetX = Math.sin(yaw) * Math.cos(pitch) * radius;
     const offsetY = Math.sin(pitch) * radius;
@@ -102,6 +108,14 @@ export class WorldScene {
       targetPosition.y + offsetY,
       targetPosition.z + offsetZ
     );
+    this._updateCameraShake(deltaSeconds);
+    if (this.shake.remaining > 0) {
+      const decay = this.shake.remaining / this.shake.duration;
+      const strength = this.shake.strength * decay;
+      desired.x += Math.sin(this.shake.seed * 31.7) * strength;
+      desired.y += Math.cos(this.shake.seed * 27.1) * strength * 0.7;
+      desired.z += Math.sin(this.shake.seed * 19.3) * strength;
+    }
     this.camera.position.lerp(desired, 0.12);
     this.camera.lookAt(targetPosition.x, targetPosition.y + 1.3, targetPosition.z);
     this._updateCameraBasis();
@@ -143,6 +157,22 @@ export class WorldScene {
     this.camera.aspect = width / height;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(width, height);
+  }
+
+  addCameraImpulse(strength = 0.1, duration = 0.14) {
+    this.shake.strength = Math.min(0.5, Math.max(this.shake.strength, strength));
+    this.shake.duration = Math.min(0.45, Math.max(this.shake.duration, duration));
+    this.shake.remaining = Math.max(this.shake.remaining, this.shake.duration);
+  }
+
+  _updateCameraShake(deltaSeconds) {
+    if (this.shake.remaining <= 0) return;
+    this.shake.remaining = Math.max(0, this.shake.remaining - deltaSeconds);
+    this.shake.seed += 1;
+    if (this.shake.remaining <= 0) {
+      this.shake.strength = 0;
+      this.shake.duration = 0;
+    }
   }
 
   render() {
