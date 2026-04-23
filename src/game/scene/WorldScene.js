@@ -1,11 +1,13 @@
 import * as THREE from "three";
+import { TerrainSystem } from "../systems/TerrainSystem.js";
 
 export class WorldScene {
-  constructor(container) {
+  constructor(container, options = {}) {
+    this.arenaRadius = options?.map?.arenaRadius ?? 20;
     this.container = container;
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0x13151f);
-    this.scene.fog = new THREE.Fog(0x13151f, 20, 58);
+    this.scene.fog = new THREE.Fog(0x13151f, 35, Math.max(58, this.arenaRadius * 2.2));
 
     this.camera = new THREE.PerspectiveCamera(
       65,
@@ -22,7 +24,6 @@ export class WorldScene {
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     container.appendChild(this.renderer.domElement);
 
-    this.arenaRadius = 20;
     this.cameraOrbit = {
       yaw: 0.7,
       pitch: 0.78,
@@ -40,7 +41,8 @@ export class WorldScene {
     this.cameraForward = new THREE.Vector3(0, 0, -1);
     this.cameraRight = new THREE.Vector3(1, 0, 0);
     this._setupLights();
-    this._setupArena();
+    this.terrain = new TerrainSystem(this.scene, { arenaRadius: this.arenaRadius });
+    this.terrain.build();
     this._setupGrid();
   }
 
@@ -62,26 +64,10 @@ export class WorldScene {
     this.scene.add(directional);
   }
 
-  _setupArena() {
-    const floor = new THREE.Mesh(
-      new THREE.CircleGeometry(this.arenaRadius, 64),
-      new THREE.MeshStandardMaterial({ color: 0x1d2730, roughness: 0.95, metalness: 0.05 })
-    );
-    floor.rotation.x = -Math.PI / 2;
-    floor.receiveShadow = true;
-    this.scene.add(floor);
-
-    const border = new THREE.Mesh(
-      new THREE.RingGeometry(this.arenaRadius - 0.2, this.arenaRadius + 0.25, 64),
-      new THREE.MeshBasicMaterial({ color: 0x5a6575, side: THREE.DoubleSide })
-    );
-    border.rotation.x = -Math.PI / 2;
-    border.position.y = 0.02;
-    this.scene.add(border);
-  }
-
   _setupGrid() {
-    const grid = new THREE.GridHelper(40, 40, 0x2f3744, 0x2b3240);
+    const size = Math.max(40, this.arenaRadius * 2);
+    const divisions = Math.max(40, Math.floor(size / 2));
+    const grid = new THREE.GridHelper(size, divisions, 0x2f3744, 0x2b3240);
     grid.position.y = 0.03;
     this.scene.add(grid);
   }
