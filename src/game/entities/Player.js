@@ -8,11 +8,11 @@ const BASE_STATS = {
 };
 
 export class Player {
-  constructor(scene) {
+  constructor(scene, { material } = {}) {
     this.scene = scene;
     this.mesh = new THREE.Mesh(
       new THREE.BoxGeometry(PLAYER_SIZE.width, PLAYER_SIZE.height, PLAYER_SIZE.depth),
-      new THREE.MeshStandardMaterial({ color: 0x4f8ef7, roughness: 0.5 })
+      material || new THREE.MeshStandardMaterial({ color: 0x4f8ef7, roughness: 0.5 })
     );
     this.mesh.castShadow = true;
     this.mesh.position.set(0, PLAYER_SIZE.height / 2, 0);

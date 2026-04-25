@@ -6,6 +6,8 @@ import { CombatSystem } from "./systems/CombatSystem.js";
 import { WeaponSystem } from "./systems/WeaponSystem.js";
 import { ProgressionSystem } from "./systems/ProgressionSystem.js";
 import { FeedbackSystem } from "./systems/FeedbackSystem.js";
+import { AssetTextureRegistry } from "./systems/AssetTextureRegistry.js";
+import { ATLAS_KEYS } from "./data/textureAtlas.js";
 import { drawWeaponChoices, createWeaponRuntime } from "./data/weapons.js";
 import { HUD } from "../ui/HUD.js";
 import { LevelUpPanel } from "../ui/LevelUpPanel.js";
@@ -29,7 +31,25 @@ const MAP_CONFIG = {
 };
 
 export class Game {
-  constructor({ gameRoot, hudRoot, weaponSelectRoot, levelUpRoot, gameOverRoot }) {
+  static async create(
+    { gameRoot, hudRoot, weaponSelectRoot, levelUpRoot, gameOverRoot },
+    textureRegistry = new AssetTextureRegistry()
+  ) {
+    await textureRegistry.init([ATLAS_KEYS.PLAYER_DEFAULT, ATLAS_KEYS.ENEMY_DEFAULT]);
+    const entityMaterials = {
+      player: textureRegistry.getMaterial(ATLAS_KEYS.PLAYER_DEFAULT, { roughness: 0.6 }),
+      enemy: textureRegistry.getMaterial(ATLAS_KEYS.ENEMY_DEFAULT, { roughness: 0.7 }),
+    };
+    return new Game({ gameRoot, hudRoot, weaponSelectRoot, levelUpRoot, gameOverRoot }, {
+      textureRegistry,
+      entityMaterials,
+    });
+  }
+
+  constructor(
+    { gameRoot, hudRoot, weaponSelectRoot, levelUpRoot, gameOverRoot },
+    { textureRegistry, entityMaterials } = {}
+  ) {
     const uiRoot = hudRoot.parentElement || gameRoot;
     this.world = new WorldScene(gameRoot, { map: MAP_CONFIG });
     this.hud = new HUD(hudRoot);
@@ -47,10 +67,15 @@ export class Game {
     });
     this.state = GAME_STATE.RUNNING;
     this.elapsed = 0;
+    this.textureRegistry = textureRegistry || null;
+    this.entityMaterials = entityMaterials || {};
 
-    this.player = new Player(this.world.scene);
+    this.player = new Player(this.world.scene, {
+      material: this.entityMaterials.player,
+    });
     this.spawner = new SpawnerSystem(this.world.scene, this.world.arenaRadius, {
       map: MAP_CONFIG,
+      enemyMaterial: this.entityMaterials.enemy,
     });
     this.weaponSelectPanel = new WeaponSelectPanel(weaponSelectRoot, (weaponDef) => {
       this.player.setWeapon(createWeaponRuntime(weaponDef));

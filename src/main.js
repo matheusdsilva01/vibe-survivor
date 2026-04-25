@@ -11,7 +11,7 @@ if (!gameRoot || !hudRoot || !weaponSelectRoot || !levelUpRoot || !gameOverRoot)
   throw new Error("Missing required UI containers.");
 }
 
-const game = new Game({
+const game = await Game.create({
   gameRoot,
   hudRoot,
   weaponSelectRoot,

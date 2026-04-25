@@ -1,10 +1,11 @@
 import { Mob } from "../entities/Mob.js";
 
 export class SpawnerSystem {
-  constructor(scene, arenaRadius, { map } = {}) {
+  constructor(scene, arenaRadius, { map, enemyMaterial } = {}) {
     this.scene = scene;
     this.arenaRadius = arenaRadius;
     this.map = map || null;
+    this.enemyMaterial = enemyMaterial || null;
     this.mobs = [];
     this.spawnTimer = 0;
     this.elapsed = 0;
@@ -43,6 +44,7 @@ export class SpawnerSystem {
         speed: 2.1 + Math.min(2, this.elapsed / 60),
         damage: 7 + this.elapsed / 30,
         xpReward: 10 + Math.floor(this.elapsed / 12),
+        material: this.enemyMaterial,
       });
 
       const angle = Math.random() * Math.PI * 2;

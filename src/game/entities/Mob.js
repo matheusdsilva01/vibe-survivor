@@ -3,10 +3,10 @@ import * as THREE from "three";
 let NEXT_MOB_ID = 1;
 
 export class Mob {
-  constructor(scene, { health = 25, speed = 2.3, damage = 9, xpReward = 10 } = {}) {
+  constructor(scene, { health = 25, speed = 2.3, damage = 9, xpReward = 10, material } = {}) {
     this.mesh = new THREE.Mesh(
       new THREE.SphereGeometry(0.55, 16, 16),
-      new THREE.MeshStandardMaterial({ color: 0xd35656, roughness: 0.6 })
+      material || new THREE.MeshStandardMaterial({ color: 0xd35656, roughness: 0.6 })
     );
     this.mesh.castShadow = true;
     this.mesh.position.y = 0.55;
