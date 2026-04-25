@@ -23,6 +23,8 @@ export class Projectile {
     this.mode = "linear";
     this.origin = new THREE.Vector3();
     this.owner = null;
+    this.remainingRicochets = 0;
+    this.ricochetRange = 8;
   }
 
   setPosition(x, y, z) {
@@ -46,20 +48,9 @@ export class Projectile {
       return;
     }
 
-    if (this.mode === "boomerang") {
-      const half = this.maxDistance * 0.5;
-      const toOwner = new THREE.Vector3().subVectors(this.owner.position, this.mesh.position).setY(0);
-      const outward = this.travelled < half;
-      const dir = outward
-        ? this.direction.clone()
-        : toOwner.lengthSq() > 0.001
-          ? toOwner.normalize()
-          : this.direction.clone().negate();
-      const step = this.speed * deltaSeconds;
-      this.mesh.position.addScaledVector(dir, step);
-      this.travelled += step;
-      if (!outward && toOwner.length() < 1) this.dead = true;
-      if (this.travelled >= this.maxDistance) this.dead = true;
-    }
+    const step = this.speed * deltaSeconds;
+    this.mesh.position.addScaledVector(this.direction, step);
+    this.travelled += step;
+    if (this.travelled >= this.maxDistance) this.dead = true;
   }
 }

@@ -1,3 +1,5 @@
+import { WEAPON_MODES } from "./weapons.js";
+
 export const GENERAL_UPGRADES = [
   {
     id: "move_speed",
@@ -58,7 +60,7 @@ const WEAPON_UPGRADES = [
     id: "weapon_projectiles",
     name: "Extra Volley",
     description: "+1 projectile/extra target.",
-    appliesTo: (weapon) => weapon.archetype !== "pulse",
+    appliesTo: (weapon) => weapon.mode !== WEAPON_MODES.CIRCULAR_AREA,
     apply: ({ weapon }) => {
       weapon.stats.projectileCount = Math.min(8, weapon.stats.projectileCount + 1);
     },
@@ -79,9 +81,18 @@ const WEAPON_UPGRADES = [
     id: "weapon_pierce",
     name: "Penetrating Force",
     description: "+1 pierce.",
-    appliesTo: (weapon) => weapon.archetype === "projectile" || weapon.archetype === "boomerang",
+    appliesTo: (weapon) => weapon.mode === WEAPON_MODES.PROJECTILE,
     apply: ({ weapon }) => {
       weapon.stats.pierce = Math.min(10, (weapon.stats.pierce || 0) + 1);
+    },
+  },
+  {
+    id: "weapon_ricochet",
+    name: "Kinetic Rebound",
+    description: "+1 ricochet bounce.",
+    appliesTo: (weapon) => weapon.mode === WEAPON_MODES.RICOCHET,
+    apply: ({ weapon }) => {
+      weapon.stats.ricochetCount = Math.min(12, (weapon.stats.ricochetCount || 1) + 1);
     },
   },
   {
@@ -95,10 +106,10 @@ const WEAPON_UPGRADES = [
     },
   },
   {
-    id: "pulse_radius",
+    id: "circular_area_radius",
     name: "Inferno Radius",
-    description: "+20% pulse radius.",
-    appliesTo: (weapon) => weapon.archetype === "pulse",
+    description: "+20% circular area radius.",
+    appliesTo: (weapon) => weapon.mode === WEAPON_MODES.CIRCULAR_AREA,
     apply: ({ weapon }) => {
       weapon.stats.aoeRadius *= 1.2;
       weapon.stats.range = weapon.stats.aoeRadius;

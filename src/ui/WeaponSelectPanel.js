@@ -17,7 +17,7 @@ export class WeaponSelectPanel {
                 <button class="choice-btn" data-index="${index}">
                   <strong>${weapon.name}</strong>
                   <span>${weapon.description}</span>
-                  <span class="muted">Type: ${weapon.archetype}</span>
+                  <span class="muted">Type: ${weapon.mode}</span>
                 </button>
               `
             )

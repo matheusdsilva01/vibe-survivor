@@ -1,9 +1,16 @@
+export const WEAPON_MODES = {
+  PROJECTILE: "projectile",
+  RICOCHET: "ricochet",
+  CIRCULAR_AREA: "circular_area",
+  FRONTAL_CONE: "frontal_cone",
+};
+
 export const WEAPON_DEFS = [
   {
     id: "iron_sword",
     name: "Iron Sword",
-    archetype: "melee",
-    description: "Balanced cleave with short cooldown.",
+    mode: WEAPON_MODES.FRONTAL_CONE,
+    description: "Balanced 45° frontal cleave.",
     baseStats: {
       damage: 20,
       cooldown: 0.65,
@@ -17,7 +24,7 @@ export const WEAPON_DEFS = [
   {
     id: "hunter_bow",
     name: "Hunter Bow",
-    archetype: "projectile",
+    mode: WEAPON_MODES.PROJECTILE,
     description: "Accurate long-range arrows.",
     baseStats: {
       damage: 16,
@@ -32,7 +39,7 @@ export const WEAPON_DEFS = [
   {
     id: "arcane_staff",
     name: "Arcane Staff",
-    archetype: "projectile",
+    mode: WEAPON_MODES.PROJECTILE,
     description: "Piercing arcane bolts.",
     baseStats: {
       damage: 14,
@@ -47,8 +54,8 @@ export const WEAPON_DEFS = [
   {
     id: "dual_daggers",
     name: "Dual Daggers",
-    archetype: "melee",
-    description: "Fast, rapid strikes.",
+    mode: WEAPON_MODES.FRONTAL_CONE,
+    description: "Fast 45° frontal slashes.",
     baseStats: {
       damage: 10,
       cooldown: 0.26,
@@ -62,8 +69,8 @@ export const WEAPON_DEFS = [
   {
     id: "war_hammer",
     name: "War Hammer",
-    archetype: "melee",
-    description: "Heavy hits with broad impact.",
+    mode: WEAPON_MODES.FRONTAL_CONE,
+    description: "Heavy 45° frontal smash with splash.",
     baseStats: {
       damage: 36,
       cooldown: 1.2,
@@ -77,7 +84,7 @@ export const WEAPON_DEFS = [
   {
     id: "crossbow",
     name: "Crossbow",
-    archetype: "projectile",
+    mode: WEAPON_MODES.PROJECTILE,
     description: "Burst volley bolts.",
     baseStats: {
       damage: 11,
@@ -92,7 +99,7 @@ export const WEAPON_DEFS = [
   {
     id: "frost_wand",
     name: "Frost Wand",
-    archetype: "projectile",
+    mode: WEAPON_MODES.PROJECTILE,
     description: "Projectiles that slow enemies.",
     baseStats: {
       damage: 12,
@@ -109,22 +116,24 @@ export const WEAPON_DEFS = [
   {
     id: "chakram",
     name: "Chakram",
-    archetype: "boomerang",
-    description: "Returning blade that can hit multiple foes.",
+    mode: WEAPON_MODES.RICOCHET,
+    description: "Bouncing blade that ricochets between foes.",
     baseStats: {
       damage: 14,
       cooldown: 0.95,
       range: 7,
       projectileCount: 1,
       speed: 12,
-      pierce: 3,
+      pierce: 0,
+      ricochetCount: 3,
+      ricochetRange: 8,
       aoeRadius: 0,
     },
   },
   {
     id: "fire_orb",
     name: "Fire Orb",
-    archetype: "pulse",
+    mode: WEAPON_MODES.CIRCULAR_AREA,
     description: "Periodic area bursts around the hero.",
     baseStats: {
       damage: 18,
