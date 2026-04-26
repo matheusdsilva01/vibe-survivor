@@ -1,21 +1,59 @@
 import * as THREE from "three";
 
-const PLAYER_SIZE = { width: 1, height: 1.6, depth: 1 };
 const BASE_STATS = {
   moveSpeed: 7,
   maxHealth: 100,
   xpMultiplier: 1,
 };
 
+function createPlayerGeometry(material) {
+  const group = new THREE.Group();
+  const defaultMaterial = material || new THREE.MeshStandardMaterial({ color: 0x4f8ef7, roughness: 0.5 });
+
+  // Torso (main body)
+  const torso = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.8, 0.4), defaultMaterial);
+  torso.position.y = 0.4;
+  torso.castShadow = true;
+  group.add(torso);
+
+  // Head
+  const head = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.4, 0.4), defaultMaterial);
+  head.position.y = 1.1;
+  head.castShadow = true;
+  group.add(head);
+
+  // Left arm
+  const leftArm = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.7, 0.2), defaultMaterial);
+  leftArm.position.set(-0.4, 0.5, 0);
+  leftArm.castShadow = true;
+  group.add(leftArm);
+
+  // Right arm
+  const rightArm = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.7, 0.2), defaultMaterial);
+  rightArm.position.set(0.4, 0.5, 0);
+  rightArm.castShadow = true;
+  group.add(rightArm);
+
+  // Left leg
+  const leftLeg = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.6, 0.2), defaultMaterial);
+  leftLeg.position.set(-0.15, 0.05, 0);
+  leftLeg.castShadow = true;
+  group.add(leftLeg);
+
+  // Right leg
+  const rightLeg = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.6, 0.2), defaultMaterial);
+  rightLeg.position.set(0.15, 0.05, 0);
+  rightLeg.castShadow = true;
+  group.add(rightLeg);
+
+  return group;
+}
+
 export class Player {
   constructor(scene, { material } = {}) {
     this.scene = scene;
-    this.mesh = new THREE.Mesh(
-      new THREE.BoxGeometry(PLAYER_SIZE.width, PLAYER_SIZE.height, PLAYER_SIZE.depth),
-      material || new THREE.MeshStandardMaterial({ color: 0x4f8ef7, roughness: 0.5 })
-    );
-    this.mesh.castShadow = true;
-    this.mesh.position.set(0, PLAYER_SIZE.height / 2, 0);
+    this.mesh = createPlayerGeometry(material);
+    this.mesh.position.set(0, 0, 0);
     scene.add(this.mesh);
 
     this.input = {
