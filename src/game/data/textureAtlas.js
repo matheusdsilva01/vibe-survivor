@@ -4,8 +4,8 @@ export const ATLAS_KEYS = {
 };
 
 export const TEXTURE_ATLAS = {
-  [ATLAS_KEYS.PLAYER_DEFAULT]: "/assets/player-default.png",
-  [ATLAS_KEYS.ENEMY_DEFAULT]: "/assets/enemy-default.png",
+  [ATLAS_KEYS.PLAYER_DEFAULT]: "assets/player-default.png",
+  [ATLAS_KEYS.ENEMY_DEFAULT]: "assets/enemy-default.png",
 };
 
 export function getAtlasPath(key) {
