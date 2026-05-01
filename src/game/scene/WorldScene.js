@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { TerrainSystem } from "../systems/TerrainSystem.js";
+import { EnvironmentSystem } from "../systems/EnvironmentSystem.js";
 
 export class WorldScene {
   constructor(container, options = {}) {
@@ -43,6 +44,8 @@ export class WorldScene {
     this._setupLights();
     this.terrain = new TerrainSystem(this.scene, { arenaRadius: this.arenaRadius });
     this.terrain.build();
+    this.environment = new EnvironmentSystem(this.scene, this.terrain, { arenaRadius: this.arenaRadius });
+    this.environment.build();
     this._setupGrid();
   }
 
@@ -82,6 +85,12 @@ export class WorldScene {
     const scale = max / distance;
     pos.x *= scale;
     pos.z *= scale;
+  }
+
+  update(deltaSeconds) {
+    if (this.environment) {
+      this.environment.update(deltaSeconds);
+    }
   }
 
   updateCamera(targetPosition, deltaSeconds = 1 / 60) {

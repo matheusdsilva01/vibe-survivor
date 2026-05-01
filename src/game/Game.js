@@ -156,6 +156,7 @@ export class Game {
 
     this.feedback.update(delta);
     this._renderUi();
+    this.world.update(delta);
     this.world.updateCamera(this.player.position, delta);
     this.world.render();
   };
